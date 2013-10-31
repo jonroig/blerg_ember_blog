@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Blerg Sample Blog</title>
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<!-- 
+
+Hello! If you're reading this... welcome! 
+Let me just apologize for the mess... this is more of a place for me to experiment than anything...
+... so... uhhh... yeah. 
+
+Basically, this thing is built using ember.js was a totally hacked together fake(ish?) REST 
+controller to serve up data.  If you want to see it for some reason, hit me up - I'll send
+you the source code.
+
+If you look at my JS, you'll see examples of how to bind to datasources... below, this is mostly template stuff. 
+
+-->
+
+
+<body>
+  <script type="text/x-handlebars">
+      <div id="contents">
+        <h1 class="mainTitle">
+          <a href="#" class="titleLink">Blerg Sample Blog</a>
+        </h1>
+        <div id="mainContents">
+          {{outlet}}
+          {{outlet stories}}
+          {{outlet newstory}}
+        </div>
+
+      </div>
+
+
+      <div id="rightMenu">
+        <h2>About</h2>
+        <p>
+          Welcome to my Blerg Sample Blog!
+        </p>
+        <p>
+          Recently, I had to learn Ember.js to work on a project for my employer. Given the lack of good tutorials / examples which conform to the latest Ember Data specs, I decided to create this project to both learn Ember and share my findings with anyone who is interested. Hopefully, you'll find it useful. This is still very much a work in progress.
+        </p>
+        <p>
+          If you need something, drop me an email to jonroig -at- gmail dot com.
+          If you have trouble viewing this site, here is a <a href="/lofi.php">lo-fi version of jonroig.com</a>.
+        </p>
+
+        {{outlet topics}}
+        
+      </div>
+  </script>
+
+  <script src="js/libs/jquery-1.9.1.js"></script>
+  <script src="js/libs/handlebars-1.0.0.js"></script>
+  <script src="js/libs/ember-1.0.0.js"></script>
+  <script src="js/libs/ember-data.min.js"></script>
+  
+  <script src="js/app.js"></script>
+
+</body>
+</html>
+
+<script type="text/x-handlebars" id="index">
+  <ul id="mainArticleList">
+  {{#each model}}
+    <li>
+      <h2>{{title}}</h2>
+      <p class="storyDatetime">{{creationDatetime}}<p/>
+      {{{body}}}
+      <br/><hr/>
+    </li>
+  {{/each}}
+</ul>    
+
+
+</script>
+
+<script type="text/x-handlebars" id="stories">
+<ul>
+  {{#each model}}
+    <li>
+      <h2>{{title}}</h2>
+      <p class="storyDatetime" >{{creationDatetime}}</p>
+      {{{body}}}
+      <br/><hr/>
+    </li>
+    {{/each}}
+</ul>    
+
+
+
+
+</script>
+
+<script type="text/x-handlebars" id="story">
+      <h2>{{title}}</h2>
+      {{#if isEditing}}
+        {{input type="text" value=pn_title class="editTitle"}}
+      {{/if}}
+
+
+      <p class="storyDatetime" >
+        {{creationDatetime}} |
+        {{#if isEditing}}
+          <button {{action 'doneEditing'}}>Done</button>
+        {{else}}
+          <button {{action 'edit'}}>Edit</button>
+        {{/if}}
+      </p>
+
+      {{#if isEditing}}
+        {{textarea value=body class="editHometext"}}
+      {{/if}}
+
+      {{{body}}}
+
+        <br/><hr/>
+</script>
+
+
+
+<script type="text/x-handlebars" id="topics">
+<h2>Topics</h2>
+<ul>
+  {{#each model}}
+    <li>{{#link-to 'topic' this}}{{topicText}}{{/link-to}} ({{counter}})
+  {{/each}}
+</ul>
+</script>
+
+<script type="text/x-handlebars" id="topic">
+  <h2>{{topicText}}</h2>
+</script>
+
+
+<script type="text/x-handlebars" id="shortStories">
+<ul>
+  {{#each model}}
+    <li>
+       {{#link-to 'story' this}}{{title}}{{/link-to}}
+    </li>
+    {{/each}}
+</ul>    
+</script>
+
+
+<script type="text/x-handlebars" id="newstory">
+<h2>New Story</h2>
+  <p>Title<br/>
+    {{input type="text" value=title class="newTitle"}}
+  </p>
+  <p>Date (YYYY-MM-DD)<br/>
+    {{input type="text" value=creationDatetime class="newTitle"}}
+  </p>
+  <p>
+    Topic: 
+    {{view Ember.Select
+        contentBinding="App.availableTopics.content"
+        valueBinding="App.availableTopics.selected"
+         selectionBinding="content.topicId"
+        optionValuePath="content.id"
+        optionLabelPath="content.topicText"
+        prompt="Please select a topic"
+        }} 
+
+    
+    <br/>
+    {{input type="text" value=pn_topic.id class="newTitle"}}
+  </p>
+
+  <p>
+    {{textarea value=body class="editHometext"}}
+  </p>
+
+   <button {{action 'save'}}>Save</button>
+</script>
+
